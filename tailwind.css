@@ -1,0 +1,341 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    @apply h-full min-h-full relative;
+  }
+  body {
+    font-family: "Open Sans", sans-serif;
+    @apply antialiased min-h-full bg-gray-200 bg-opacity-80 overflow-x-hidden;
+  }
+  #root {
+    @apply w-full h-full;
+  }
+  #app {
+    @apply flex flex-col justify-between w-full h-screen relative overflow-y-auto;
+  }
+  #wrap {
+    @apply w-full flex-1;
+  }
+  header {
+    @apply w-full sticky top-0 h-auto py-1 shadow items-center z-10
+    border-b border-gray-200 bg-white;
+  }
+  .header-middle {
+    @apply flex items-center lg:justify-between justify-center;
+  }
+  footer {
+    @apply z-10 text-center py-2 border-t border-gray-300 bg-white;
+  }
+  .brand {
+    @apply flex items-center;
+  }
+  .brand a {
+    font-family: "Playfair Display", serif;
+    @apply block font-semibold italic text-lg md:text-2xl max-w-min;
+  }
+  .search {
+    @apply flex relative items-center max-w-xs rounded w-full;
+  }
+  .search input {
+    @apply appearance-none bg-gray-100 text-black rounded w-full md:h-10
+    px-3 py-1 text-sm transform transition-all;
+  }
+  .search button {
+    @apply text-xl absolute right-0  px-3;
+  }
+  .left-side {
+    @apply flex flex-col p-4 w-full sticky top-20
+     bg-white;
+  }
+  .popular-clubs {
+    font-family: "Nunito", sans-serif;
+  }
+  .popular-clubs h1 {
+    @apply w-full block lg:text-2xl font-semibold pb-2
+    border-b border-gray-300 border-opacity-90;
+  }
+  .popular-clubs ul {
+    @apply w-full flex flex-col py-1;
+  }
+  .popular-clubs ul li {
+    @apply w-full block my-2;
+  }
+  .popular-clubs ul li a {
+    @apply w-full flex flex-col lg:text-base text-xs
+    text-blue-900 hover:text-opacity-70;
+  }
+  .popular-clubs ul li a span {
+    @apply w-full text-sm ml-3 text-gray-400;
+  }
+  .right-side {
+    @apply flex flex-col p-4 w-full sticky top-16
+    bg-white;
+  }
+  .right-profile {
+    @apply flex flex-wrap items-center
+    border-b border-gray-300 border-opacity-90 pb-2;
+  }
+  .right-profile a {
+    @apply flex flex-wrap items-center font-semibold text-black;
+  }
+  .subscribededList {
+    @apply w-full h-full flex flex-col;
+  }
+  .subscribededList h1 {
+    font-family: "Nunito", sans-serif;
+    @apply w-full text-sm lg:text-lg font-semibold text-gray-500 my-3;
+  }
+  .subscribededList nav {
+    @apply w-full h-full flex flex-col list-none divide-y;
+  }
+  .subscribededList nav li {
+    @apply w-full block;
+  }
+  .subscribededList nav li a {
+    @apply w-full flex items-center text-sm py-2
+    text-black bg-white hover:bg-gray-100;
+  }
+  .timeLine {
+    @apply w-full h-full flex flex-col px-6;
+  }
+  .postData {
+    -webkit-box-shadow: 0px 0px 5px 1px rgba(183, 183, 183, 0.5);
+    box-shadow: 0px 0px 5px 1px rgba(183, 183, 183, 0.5);
+    @apply w-full h-auto flex flex-col my-2 bg-white;
+  }
+  .postHeader {
+    @apply w-full block;
+  }
+  .postBody {
+    @apply w-full h-full flex flex-wrap;
+  }
+  .postActions {
+    @apply w-full h-full block border-t border-b
+    border-gray-300 border-opacity-80 py-1;
+  }
+  .postComments {
+    @apply w-full h-full block;
+  }
+  .comment {
+    @apply w-full h-auto flex flex-wrap items-center my-3;
+  }
+  .commentName {
+    @apply w-full capitalize px-2 pt-1 text-sm
+    rounded-tl-xl rounded-tr-xl bg-gray-100;
+  }
+  .commentBody {
+    @apply w-full h-full pl-2 pr-2 pb-2
+    rounded-bl-xl rounded-br-xl bg-gray-100;
+  }
+  .read-more-button {
+    font-family: "Open Sans", sans-serif;
+    @apply inline-block ml-1 font-semibold cursor-pointer pl-1
+    border-l border-gray-500 text-black;
+  }
+  .loadMoreComment {
+    @apply mx-4 mt-1 mb-2 text-sm rounded-md py-1
+    border border-gray-300;
+  }
+  .sendCommment {
+    @apply w-full h-auto block;
+  }
+  .sendcommentIn {
+    @apply w-full h-full flex flex-wrap items-start;
+  }
+  .sendcommentIn textarea {
+    @apply appearance-none border border-transparent rounded-lg block flex-grow
+   text-gray-700 py-2 px-2 leading-tight align-top resize-none
+   border-gray-200 bg-gray-200 bg-opacity-80 focus:outline-none focus:border-gray-400;
+  }
+  .sendcommentIn button {
+    @apply ml-1 align-top justify-start mt-4;
+  }
+  .commentReactions {
+    @apply flex flex-wrap items-center;
+  }
+  .commentReactions button {
+    @apply flex flex-wrap items-center mr-2;
+  }
+  .commentReactions span {
+    @apply block ml-1;
+  }
+  .accountHeader {
+    @apply flex flex-wrap items-center shadow relative
+    mt-14 -mb-12 w-full bg-white;
+  }
+  .accountTimeline {
+    @apply w-full;
+  }
+  .accountName {
+    font-family: "Open Sans", sans-serif;
+    @apply w-full text-xl font-bold mb-1;
+  }
+  .accounTitle {
+    @apply w-full text-sm;
+  }
+  .userFallows {
+    @apply flex flex-wrap items-center w-full text-center justify-center pb-2;
+  }
+  .userFallows div {
+    @apply flex mx-2;
+  }
+  .userFallows div span {
+    @apply block mr-1 font-semibold;
+  }
+  .sendPost {
+    @apply mx-6 mb-2 flex flex-col px-4
+    border shadow bg-white;
+  }
+  .sendPost .body {
+    @apply w-full h-auto flex flex-wrap items-center pt-3;
+  }
+  .postField {
+    @apply block h-full flex-grow ml-3;
+  }
+  .postField textarea {
+    @apply appearance-none w-full rounded-lg border border-transparent block flex-grow
+    text-gray-700 py-2 px-2 leading-tight align-top resize-none h-20
+    border-gray-200 bg-gray-200 bg-opacity-80 focus:outline-none;
+  }
+  .postField span {
+    @apply w-full rounded-lg border border-transparent block flex-grow
+    text-gray-400 py-2 px-2 leading-tight align-top resize-none h-12 cursor-pointer
+    border-gray-200 bg-gray-200 bg-opacity-80;
+  }
+  .ClubLeft {
+    @apply flex flex-col p-4 flex-none w-full sticky top-0
+    shadow bg-white;
+  }
+  .ClubRight {
+    @apply flex flex-col flex-none w-full p-4 shadow bg-white;
+  }
+  .ClubSearch {
+    @apply flex relative items-center max-w-xs w-full;
+  }
+  .ClubSearch input {
+    @apply appearance-none bg-gray-100 text-black w-full h-10 rounded-3xl
+    px-3 py-1 text-sm transform transition-all;
+  }
+  .ClubSearch button {
+    @apply text-xl absolute right-0 px-3;
+  }
+  .UserRight {
+    @apply flex flex-col flex-none w-full sticky top-0 py-4 px-4 shadow
+    bg-white;
+  }
+  .UserRight nav {
+    @apply w-full h-full block m-0 p-0;
+  }
+  .UserRight nav ul {
+    @apply w-full flex flex-col items-center p-0 divide-y divide-gray-200;
+  }
+  .UserRight nav ul li {
+    @apply w-full block rounded-lg;
+  }
+  .UserRight nav ul li a {
+    @apply w-full flex items-center px-5 py-4 rounded-lg
+    hover:bg-gray-200 hover:bg-opacity-70 transform transition-all;
+  }
+  .UserRight nav ul li a .textSpan {
+    @apply block px-2 ml-3;
+  }
+  .ClubRight nav ul li a .iconSpan {
+    @apply block;
+  }
+  .sendRequestBtn {
+    @apply block;
+  }
+  .infoBox {
+    @apply w-1/2 flex flex-wrap items-center justify-center py-2;
+  }
+  .infoBox .boxCount {
+    @apply block text-sm mr-2 font-semibold text-black;
+  }
+  .infoBox .boxText {
+    @apply block text-sm;
+  }
+  .StickyHeader {
+    @apply sticky flex items-center justify-between pr-5 top-0 z-10 shadow bg-white;
+  }
+  .StickyContainer {
+    @apply block w-full px-7 py-2;
+  }
+  .StickyContainer h1 {
+    font-family: "Roboto", sans-serif;
+    @apply block w-full text-sm;
+  }
+  .mobileFooter {
+    @apply fixed w-full bottom-0 border-t py-4 z-20
+    border-gray-400 bg-white;
+  }
+  .mobileFooter ul {
+    @apply w-full flex flex-wrap items-center justify-center p-0 m-0 space-x-9;
+  }
+  .mobileFooter ul li {
+    @apply block;
+  }
+  .mobileFooter ul li a {
+    @apply block;
+  }
+  .ProfilePage {
+    @apply w-full flex flex-row justify-center items-center mt-28 px-6
+    bg-gray-200;
+  }
+  .ProfileContainer {
+    @apply block shadow w-full bg-white;
+  }
+  .ProfileAvatarP {
+    @apply w-36 h-36 mx-auto rounded-full -mt-20 border-4 border-white object-cover;
+  }
+  .postBody .read-more-button {
+    @apply text-sm border-l-0 text-blue-700;
+  }
+  .clubHeader {
+    @apply block mx-6 mb-4 overflow-hidden shadow;
+  }
+  .cHeaderContainer {
+    @apply h-36 relative overflow-hidden;
+  }
+  .clubAvatar-div {
+    @apply absolute m-2;
+  }
+  .clubAvatar {
+    @apply border-4 rounded-full border-sky-500;
+  }
+  .clubAvatar img {
+    @apply h-32 w-32 border-4 border-transparent rounded-full object-contain drop-shadow;
+  }
+  .clubMiddle {
+    @apply h-4/6 flex flex-col items-center justify-center overflow-hidden
+    pl-36 bg-gradient-to-r from-pink-600 via-purple-500 to-indigo-500;
+  }
+  .clubBio {
+    @apply h-min overflow-hidden py-2 px-4;
+  }
+  .clubBio h2 {
+    @apply font-semibold text-sm text-white;
+  }
+  .clubEvent {
+    @apply h-2/6 pl-36 space-y-1 bg-white;
+  }
+  .clubEvent .eventContainer {
+    @apply flex flex-wrap justify-end items-center space-x-4 pt-2 px-5;
+  }
+  .clubEvent .eventContainer .editC {
+    @apply px-4 py-1 flex items-center font-semibold
+    text-sm shadow rounded space-x-2 border border-gray-300;
+  }
+  .clubEvent .eventContainer .sendMessage {
+    @apply px-4 py-1 text-sm shadow rounded border border-gray-300;
+  }
+  .clubEvent .eventContainer .sendRequest {
+    @apply flex items-center space-x-2 px-4 py-1 text-sm shadow rounded
+    font-semibold bg-gray-700 bg-opacity-90 text-white;
+  }
+  .clubLine{
+    @apply border-b bg-white;
+  }
+}
