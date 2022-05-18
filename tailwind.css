@@ -294,7 +294,7 @@
     @apply text-sm border-l-0 text-blue-700;
   }
   .clubHeader {
-    @apply block mx-6 mb-4 overflow-hidden shadow;
+    @apply block mx-6 mb-4 overflow-hidden;
   }
   .cHeaderContainer {
     @apply h-36 relative overflow-hidden;
@@ -349,5 +349,21 @@
   }
   .clubLine .createDate{
     @apply flex items-center w-full space-x-2 text-sm;
+  }
+  .clubLine .createDate span{
+    @apply inline-block;
+  }
+  .ClubData{
+    @apply h-auto flex items-center py-2 shadow
+    border-b border-gray-400 bg-opacity-50 bg-gray-300;
+  }
+  .ClubData .box{
+    @apply h-auto flex items-center justify-center space-x-2 w-1/2;
+  }
+  .ClubData .box .title{
+    @apply block font-bold;
+  }
+  .ClubData .box .content{
+    @apply block text-sm text-black;
   }
 }

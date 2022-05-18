@@ -1,3 +1,4 @@
+import ClubData from "./ClubData";
 import ClubAvatar from "./header/ClubAvatar";
 import ClubBio from "./header/ClubBio";
 import ClubEvent from "./header/ClubEvent";
@@ -18,6 +19,7 @@ const ClubHeader = () => {
         </div>
       </div>
       <ClubLine />
+      <ClubData />
     </div>
   );
 };
