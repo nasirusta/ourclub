@@ -335,35 +335,35 @@
     @apply flex items-center space-x-2 px-4 py-1 text-sm shadow rounded
     font-semibold bg-gray-700 bg-opacity-90 text-white;
   }
-  .clubLine{
+  .clubLine {
     @apply px-4 py-2 space-y-2 border-b bg-white;
   }
-  .clubLine .name{
+  .clubLine .name {
     @apply block w-full;
   }
-  .clubLine .name h1{
+  .clubLine .name h1 {
     @apply block w-full font-semibold text-lg;
   }
-  .clubLine .clubUrl{
+  .clubLine .clubUrl {
     @apply block w-full text-sm text-gray-600;
   }
-  .clubLine .createDate{
+  .clubLine .createDate {
     @apply flex items-center w-full space-x-2 text-sm;
   }
-  .clubLine .createDate span{
+  .clubLine .createDate span {
     @apply inline-block;
   }
-  .ClubData{
+  .ClubData {
     @apply h-auto flex items-center py-2 shadow
     border-b border-gray-400 bg-opacity-50 bg-gray-300;
   }
-  .ClubData .box{
+  .ClubData .box {
     @apply h-auto flex items-center justify-center space-x-2 w-1/2;
   }
-  .ClubData .box .title{
+  .ClubData .box .title {
     @apply block font-bold;
   }
-  .ClubData .box .content{
+  .ClubData .box .content {
     @apply block text-sm text-black;
   }
 }

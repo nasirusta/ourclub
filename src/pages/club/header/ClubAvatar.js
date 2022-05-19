@@ -1,10 +1,18 @@
-const ClubAvatar = () => {
+import { Avatar } from "@mui/material";
+import { stringAvatar } from "../../../helper/UserHelper";
+
+const ClubAvatar = ({ data }) => {
   return (
     <div className="clubAvatar">
-      <img
-        src="https://pbs.twimg.com/profile_images/1434306504853753862/trkSNAid_400x400.jpg"
-        alt=""
-      />
+      {typeof data.photoURL !== "undefined" && data.photoURL !== "" && (
+        <Avatar src={data.photoURL} />
+      )}
+      {typeof data.photoURL !== "undefined" && data.photoURL === "" && (
+        <Avatar {...stringAvatar(`${data.name}Club`, 128, 128)} />
+      )}
+      {typeof data.photoURL == "undefined" && (
+        <Avatar {...stringAvatar(`${data.name}Club`, 128, 128)} />
+      )}
     </div>
   );
 };
