@@ -4,8 +4,8 @@ import ClubBio from "./header/ClubBio";
 import ClubEvent from "./header/ClubEvent";
 import ClubLine from "./header/ClubLine";
 
-const ClubHeader = ({club}) => {
-console.log(club);
+const ClubHeader = ({ club }) => {
+  console.log(club);
 
   return (
     <div className="clubHeader">

@@ -303,7 +303,7 @@
     @apply absolute m-2;
   }
   .clubAvatar {
-    @apply border-4 rounded-full border-sky-500;
+    @apply block;
   }
   .clubAvatar img {
     @apply h-32 w-32 border-4 border-transparent rounded-full object-contain drop-shadow;
@@ -365,5 +365,11 @@
   }
   .ClubData .box .content {
     @apply block text-sm text-black;
+  }
+  .editClubPhotoBtn {
+    @apply rounded-full p-1 -mt-9 z-10 bg-gray-300 text-gray-600;
+  }
+  .clubPhoto {
+    @apply block rounded-full border-4 p-1;
   }
 }
