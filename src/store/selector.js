@@ -14,3 +14,10 @@ export const authtMemo = createSelector(
     return auth;
   }
 );
+
+export const progressMemo = createSelector(
+  (state) => state.progress,
+  (progress) => {
+    return progress;
+  }
+);

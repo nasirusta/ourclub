@@ -27,3 +27,7 @@ export const CREATE_CLUB_FAIL = "CREATE_CLUB_FAIL";
 export const EDIT_CLUB_START = "EDIT_CLUB_START";
 export const EDIT_CLUB_SUCCESS = "EDIT_CLUB_SUCCESS";
 export const EDIT_CLUB_FAIL = "EDIT_CLUB_FAIL";
+
+// Progress type
+export const PROGRESS_START = "PROGRESS_START";
+export const PROGRESS_END = "PROGRESS_END";

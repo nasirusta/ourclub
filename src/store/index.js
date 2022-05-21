@@ -3,15 +3,17 @@ import thunk from "redux-thunk";
 import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import userReduce from "./reducers/userReduce";
+import progressReduce from "./reducers/progressReduce";
 
 const reducers = combineReducers({
   user: userReduce,
+  progress: progressReduce,
 });
 
 const persistConfig = {
   key: "root",
   storage,
-  // blacklist: ["faceebookUser"],
+  blacklist: ["progress"],
 };
 
 const persistedReducer = persistReducer(persistConfig, reducers);

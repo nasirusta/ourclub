@@ -1,8 +1,8 @@
+import StickyHeader from "./StickyHeader";
 import ClubHeader from "./ClubHeader";
 import ClubRight from "./ClubRight";
 import ClubLeft from "./ClubLeft";
 import { TimeLine, SendPost, MobileFooter, UserRight } from "../../components";
-import StickyHeader from "./StickyHeader";
 import { useEffect, useState, Fragment } from "react";
 import { useWindowWidth } from "@react-hook/window-size";
 import ReactLoading from "react-loading";
@@ -13,7 +13,7 @@ const clubsCollectionRef = collection(db, "clubs");
 
 const ClubPage = () => {
   const windowWidth = useWindowWidth();
-  const [clubState, setClub] = useState(false);
+  const [currentClub, setCurrentClub] = useState(false);
   let { club } = useParams();
 
   useEffect(() => {
@@ -22,7 +22,7 @@ const ClubPage = () => {
     getDocs(q)
       .then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
-          setClub({ recordID: doc.id, data: doc.data() });
+          setCurrentClub({ clubID: doc.id, clubData: doc.data() });
         });
       })
       .catch((error) => {
@@ -38,7 +38,7 @@ const ClubPage = () => {
         </div>
       )}
       <div className="md:w-2/4 w-full ">
-        {!clubState && (
+        {!currentClub && (
           <div className="w-full flex flex-wrap items-center justify-center py-4">
             <ReactLoading
               type={"spin"}
@@ -48,12 +48,12 @@ const ClubPage = () => {
             />
           </div>
         )}
-        {clubState && (
+        {currentClub && (
           <Fragment>
-            <StickyHeader name={clubState.data.name} />
-            <ClubHeader club={clubState} />
+            <StickyHeader name={currentClub?.clubData.name} />
+            <ClubHeader currentClub={currentClub} />
             <SendPost />
-            <TimeLine />
+            {/* <TimeLine /> */}
           </Fragment>
         )}
         {windowWidth < 768 && <MobileFooter />}

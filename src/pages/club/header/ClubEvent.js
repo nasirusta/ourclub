@@ -9,13 +9,13 @@ const ClubEvent = ({ data }) => {
 
   return (
     <div className="eventContainer">
-      {data.recordID === currentUser.club && (
+      {data.clubID === currentUser.club && (
         <a href={`/manage-club`} className="editC">
           <span>Düzenle</span>
           <IoSettingsOutline size={20} />
         </a>
       )}
-      {data.recordID !== currentUser.club && (
+      {data.clubID !== currentUser.club && (
         <Fragment>
           <button type="button" className="sendMessage">
             <BsEnvelope size={20} />
