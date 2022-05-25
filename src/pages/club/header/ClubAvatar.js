@@ -1,8 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, Fragment } from "react";
 import { Avatar } from "@mui/material";
 import { stringAvatar } from "../../../helper/UserHelper";
 import { grey } from "@mui/material/colors";
 import { MdPhotoCamera } from "react-icons/md";
+import { FaTimes } from "react-icons/fa";
+import ReactLoading from "react-loading";
 import { useDispatch } from "react-redux";
 import { progInitiate } from "../../../store/actions/progressAction";
 import { useRef } from "react";
@@ -17,6 +19,7 @@ import {
 
 const ClubAvatar = ({ data, recordID }) => {
   const [ppPhoto, setPPphoto] = useState(data.photoURL);
+  const [avatarLoading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const fileRef = useRef();
 
@@ -33,6 +36,7 @@ const ClubAvatar = ({ data, recordID }) => {
         );
 
         dispatch(progInitiate(prog));
+        setLoading(true);
       },
       (err) => console.log(err),
       () => {
@@ -42,8 +46,8 @@ const ClubAvatar = ({ data, recordID }) => {
             updateDoc(userDoc, {
               photoURL: url,
             }).then(() => {
-              console.log("ok");
               setPPphoto(url);
+              setLoading(false);
             });
           } else {
             console.log("Error");
@@ -63,14 +67,18 @@ const ClubAvatar = ({ data, recordID }) => {
   };
 
   const deletePP = () => {
-    const desertRef = ref(storage, data.photoURL);
+    setLoading(true);
+    const desertRef = ref(storage, ppPhoto);
     deleteObject(desertRef)
       .then(() => {
         if (auth.currentUser) {
           const userDoc = doc(db, "clubs", recordID);
           updateDoc(userDoc, {
             photoURL: "",
-          }).then(() => {});
+          }).then(() => {
+            setPPphoto("");
+            setLoading(false);
+          });
         } else {
           console.log("Error");
         }
@@ -84,52 +92,72 @@ const ClubAvatar = ({ data, recordID }) => {
 
   return (
     <div className="clubAvatar">
-      {typeof ppPhoto !== "undefined" && ppPhoto !== "" && (
-        <div className="flex flex-col items-center">
-          <div className="clubPhoto">
-            <Avatar
-              src={ppPhoto}
-              sx={{ width: 120, height: 120, bgcolor: grey[500] ,objectFit:"fill"}}
-            />
-          </div>
-          <button
-            onClick={() => clickUpload()}
-            type="butotn"
-            className="editClubPhotoBtn"
-          >
-            <MdPhotoCamera size={24} />
-          </button>
+      {avatarLoading && (
+        <div className="w-full flex flex-wrap items-center justify-center py-4">
+          <ReactLoading type={"spin"} color="#1976d2" height={32} width={32} />
         </div>
       )}
-      {typeof ppPhoto !== "undefined" && ppPhoto === "" && (
-        <div className="flex flex-col items-center">
-          <div className="clubPhoto">
-            <Avatar {...stringAvatar(`${data.name}Club`, 120, 120)} />
-          </div>
-          <button
-            onClick={() => clickUpload()}
-            type="butotn"
-            className="editClubPhotoBtn"
-          >
-            a
-            <MdPhotoCamera size={24} />
-          </button>
-        </div>
-      )}
-      {typeof ppPhoto === "undefined" && (
-        <div className="flex flex-col items-center">
-          <div className="clubPhoto">
-            <Avatar {...stringAvatar(`${data.name}Club`, 120, 120)} />
-          </div>
-          <button
-            onClick={() => clickUpload()}
-            type="butotn"
-            className="editClubPhotoBtn"
-          >
-            b
-            <MdPhotoCamera size={24} />
-          </button>
-        </div>
+      {!avatarLoading && (
+        <Fragment>
+          {typeof ppPhoto !== "undefined" && ppPhoto !== "" && (
+            <div className="flex flex-col items-center group">
+              <div className="clubPhoto">
+                <Avatar
+                  src={ppPhoto}
+                  sx={{ width: 120, height: 120, bgcolor: grey[500] }}
+                />
+              </div>
+              <div className="cAvatar-overlay">
+                <button
+                  onClick={() => clickUpload()}
+                  type="butotn"
+                  className="editClubPhotoBtn"
+                >
+                  <MdPhotoCamera size={20} />
+                </button>
+                <button
+                  onClick={() => deletePP()}
+                  type="butotn"
+                  className="editClubPhotoBtn"
+                >
+                  <FaTimes size={18} />
+                </button>
+              </div>
+            </div>
+          )}
+          {typeof ppPhoto !== "undefined" && ppPhoto === "" && (
+            <div className="flex flex-col items-center group">
+              <div className="clubPhoto">
+                <Avatar {...stringAvatar(`${data.name}Club`, 120, 120)} />
+              </div>
+              <div className="cAvatar-overlay">
+                <button
+                  onClick={() => clickUpload()}
+                  type="butotn"
+                  className="editClubPhotoBtn"
+                >
+                  <MdPhotoCamera size={20} />
+                </button>
+              </div>
+            </div>
+          )}
+          {typeof ppPhoto === "undefined" && (
+            <div className="flex flex-col items-center group">
+              <div className="clubPhoto">
+                <Avatar {...stringAvatar(`${data.name}Club`, 120, 120)} />
+              </div>
+              <div className="cAvatar-overlay">
+                <button
+                  onClick={() => clickUpload()}
+                  type="butotn"
+                  className="editClubPhotoBtn"
+                >
+                  <MdPhotoCamera size={20} />
+                </button>
+              </div>
+            </div>
+          )}
+        </Fragment>
       )}
       <input
         ref={fileRef}

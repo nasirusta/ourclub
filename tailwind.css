@@ -306,7 +306,7 @@
     @apply block;
   }
   .clubAvatar img {
-    @apply h-32 w-32 border-4 border-transparent rounded-full object-contain drop-shadow;
+    @apply h-32 w-32 border-4 border-transparent rounded-full object-center drop-shadow;
   }
   .clubMiddle {
     @apply h-4/6 flex flex-col items-center justify-center overflow-hidden
@@ -367,9 +367,13 @@
     @apply block text-sm text-black;
   }
   .editClubPhotoBtn {
-    @apply rounded-full p-1 -mt-9 z-10 bg-gray-300 text-gray-600;
+    @apply rounded-full p-1 -mt-9 z-10
+    bg-opacity-60 bg-black text-gray-200 hover:bg-opacity-100;
   }
   .clubPhoto {
     @apply block rounded-full border-4 p-1;
+  }
+  .cAvatar-overlay{
+    @apply -mt-8 z-20 hidden space-x-2 group-hover:block;
   }
 }
