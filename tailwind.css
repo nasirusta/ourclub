@@ -309,8 +309,8 @@
     @apply h-32 w-32 border-4 border-transparent rounded-full object-center drop-shadow;
   }
   .clubMiddle {
-    @apply h-4/6 flex flex-col items-center justify-center overflow-hidden
-    pl-36 bg-gradient-to-r from-pink-600 via-purple-500 to-indigo-500;
+    @apply h-4/6 flex flex-col items-center justify-center overflow-hidden pl-24
+    lg:pl-36 bg-gradient-to-r from-pink-600 via-purple-500 to-indigo-500;
   }
   .clubBio {
     @apply h-min overflow-hidden py-2 px-4;
@@ -319,7 +319,7 @@
     @apply font-semibold text-sm text-white;
   }
   .clubEvent {
-    @apply h-2/6 pl-36 space-y-1 bg-white;
+    @apply h-2/6 lg:pl-36 space-y-1 bg-white;
   }
   .clubEvent .eventContainer {
     @apply flex flex-wrap justify-end items-center space-x-4 pt-2 px-5;

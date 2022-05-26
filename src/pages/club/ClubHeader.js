@@ -3,13 +3,11 @@ import ClubAvatar from "./header/ClubAvatar";
 import ClubBio from "./header/ClubBio";
 import ClubEvent from "./header/ClubEvent";
 import ClubLine from "./header/ClubLine";
-import ReactLoading from "react-loading";
 import ProgressBar from "@ramonak/react-progress-bar";
 import { useSelector } from "react-redux";
 import { progressMemo } from "../../store/selector";
 const ClubHeader = ({ currentClub }) => {
   const { progress, start } = useSelector(progressMemo);
-
   return (
     <div className="clubHeader">
       {start && <ProgressBar completed={progress} />}
@@ -28,6 +26,7 @@ const ClubHeader = ({ currentClub }) => {
         </div>
       </div>
       <ClubLine data={currentClub?.clubData} />
+      <ClubData />
     </div>
   );
 };

@@ -1313,7 +1313,13 @@ footer {
   --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgb(219 39 119 / 0));
   --tw-gradient-stops: var(--tw-gradient-from), #a855f7, var(--tw-gradient-to, rgb(168 85 247 / 0));
   --tw-gradient-to: #6366f1;
-  padding-left: 9rem;
+  padding-left: 6rem;
+}
+
+@media (min-width: 1024px) {
+  .clubMiddle {
+    padding-left: 9rem;
+  }
 }
 
 .clubBio {
@@ -1347,7 +1353,12 @@ footer {
 .clubEvent {
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
-  padding-left: 9rem;
+}
+
+@media (min-width: 1024px) {
+  .clubEvent {
+    padding-left: 9rem;
+  }
 }
 
 .clubEvent .eventContainer {

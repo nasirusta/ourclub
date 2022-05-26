@@ -5,6 +5,7 @@ import { grey } from "@mui/material/colors";
 import { MdPhotoCamera } from "react-icons/md";
 import { FaTimes } from "react-icons/fa";
 import ReactLoading from "react-loading";
+import { useWindowWidth } from "@react-hook/window-size";
 import { useDispatch } from "react-redux";
 import { progInitiate } from "../../../store/actions/progressAction";
 import { useRef } from "react";
@@ -18,6 +19,7 @@ import {
 } from "@firebase/storage";
 
 const ClubAvatar = ({ data, recordID }) => {
+  const windowWidth = useWindowWidth();
   const [ppPhoto, setPPphoto] = useState(data.photoURL);
   const [avatarLoading, setLoading] = useState(false);
   const dispatch = useDispatch();
@@ -88,7 +90,7 @@ const ClubAvatar = ({ data, recordID }) => {
       });
   };
 
-  useEffect(() => {}, [ppPhoto]);
+  useEffect(() => {}, [ppPhoto, windowWidth]);
 
   return (
     <div className="clubAvatar">
@@ -102,10 +104,18 @@ const ClubAvatar = ({ data, recordID }) => {
           {typeof ppPhoto !== "undefined" && ppPhoto !== "" && (
             <div className="flex flex-col items-center group">
               <div className="clubPhoto">
-                <Avatar
-                  src={ppPhoto}
-                  sx={{ width: 120, height: 120, bgcolor: grey[500] }}
-                />
+                {windowWidth > 767 && (
+                  <Avatar
+                    src={ppPhoto}
+                    sx={{ width: 120, height: 120, bgcolor: grey[500] }}
+                  />
+                )}
+                {windowWidth < 767 && (
+                  <Avatar
+                    src={ppPhoto}
+                    sx={{ width: 80, height: 80, bgcolor: grey[500] }}
+                  />
+                )}
               </div>
               <div className="cAvatar-overlay">
                 <button
@@ -128,7 +138,12 @@ const ClubAvatar = ({ data, recordID }) => {
           {typeof ppPhoto !== "undefined" && ppPhoto === "" && (
             <div className="flex flex-col items-center group">
               <div className="clubPhoto">
-                <Avatar {...stringAvatar(`${data.name}Club`, 120, 120)} />
+                {windowWidth > 767 && (
+                  <Avatar {...stringAvatar(`${data.name}Club`, 120, 120)} />
+                )}
+                {windowWidth < 767 && (
+                  <Avatar {...stringAvatar(`${data.name}Club`, 80, 80)} />
+                )}
               </div>
               <div className="cAvatar-overlay">
                 <button
@@ -144,7 +159,12 @@ const ClubAvatar = ({ data, recordID }) => {
           {typeof ppPhoto === "undefined" && (
             <div className="flex flex-col items-center group">
               <div className="clubPhoto">
-                <Avatar {...stringAvatar(`${data.name}Club`, 120, 120)} />
+                {windowWidth > 767 && (
+                  <Avatar {...stringAvatar(`${data.name}Club`, 120, 120)} />
+                )}
+                {windowWidth < 767 && (
+                  <Avatar {...stringAvatar(`${data.name}Club`, 80, 80)} />
+                )}
               </div>
               <div className="cAvatar-overlay">
                 <button
