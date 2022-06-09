@@ -1,27 +1,28 @@
-import { useState, useEffect, Fragment } from "react";
+import { useEffect, useRef } from "react";
 import { Avatar } from "@mui/material";
 import { stringAvatar } from "../../../helper/UserHelper";
 import { grey } from "@mui/material/colors";
 import { MdPhotoCamera } from "react-icons/md";
 import { FaTimes } from "react-icons/fa";
-import ReactLoading from "react-loading";
 import { useWindowWidth } from "@react-hook/window-size";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { progInitiate } from "../../../store/actions/progressAction";
-import { useRef } from "react";
-import { storage, auth, db } from "../../../firebase";
-import { doc, updateDoc } from "firebase/firestore";
+import { clubPageMemo } from "../../../store/selector";
+import { storage } from "../../../firebase";
 import {
   ref,
   uploadBytesResumable,
   getDownloadURL,
   deleteObject,
 } from "@firebase/storage";
+import {
+  clubEditAvatar,
+  clubDeleteAvatar,
+} from "../../../store/actions/clubAction";
 
-const ClubAvatar = ({ data, recordID }) => {
+const ClubAvatar = () => {
   const windowWidth = useWindowWidth();
-  const [ppPhoto, setPPphoto] = useState(data.photoURL);
-  const [avatarLoading, setLoading] = useState(false);
+  const { currentClub } = useSelector(clubPageMemo);
   const dispatch = useDispatch();
   const fileRef = useRef();
 
@@ -38,22 +39,11 @@ const ClubAvatar = ({ data, recordID }) => {
         );
 
         dispatch(progInitiate(prog));
-        setLoading(true);
       },
       (err) => console.log(err),
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then((url) => {
-          if (auth.currentUser) {
-            const userDoc = doc(db, "clubs", recordID);
-            updateDoc(userDoc, {
-              photoURL: url,
-            }).then(() => {
-              setPPphoto(url);
-              setLoading(false);
-            });
-          } else {
-            console.log("Error");
-          }
+          dispatch(clubEditAvatar(currentClub.clubID, url));
         });
       }
     );
@@ -69,116 +59,111 @@ const ClubAvatar = ({ data, recordID }) => {
   };
 
   const deletePP = () => {
-    setLoading(true);
-    const desertRef = ref(storage, ppPhoto);
+    const desertRef = ref(storage, currentClub.clubData.photoURL);
     deleteObject(desertRef)
       .then(() => {
-        if (auth.currentUser) {
-          const userDoc = doc(db, "clubs", recordID);
-          updateDoc(userDoc, {
-            photoURL: "",
-          }).then(() => {
-            setPPphoto("");
-            setLoading(false);
-          });
-        } else {
-          console.log("Error");
-        }
+        dispatch(clubDeleteAvatar(currentClub.clubID));
       })
       .catch((error) => {
         console.log(error);
       });
   };
 
-  useEffect(() => {}, [ppPhoto, windowWidth]);
+  useEffect(() => {}, [windowWidth]);
 
   return (
     <div className="clubAvatar">
-      {avatarLoading && (
-        <div className="w-full flex flex-wrap items-center justify-center py-4">
-          <ReactLoading type={"spin"} color="#1976d2" height={32} width={32} />
+      {typeof currentClub.clubData.photoURL !== "undefined" &&
+        currentClub.clubData.photoURL !== "" && (
+          <div className="flex flex-col items-center group">
+            <div className="clubPhoto">
+              {windowWidth > 767 && (
+                <Avatar
+                  src={currentClub.clubData.photoURL}
+                  sx={{ width: 120, height: 120, bgcolor: grey[500] }}
+                />
+              )}
+              {windowWidth < 767 && (
+                <Avatar
+                  src={currentClub.clubData.photoURL}
+                  sx={{ width: 80, height: 80, bgcolor: grey[500] }}
+                />
+              )}
+            </div>
+            <div className="cAvatar-overlay">
+              <button
+                onClick={() => clickUpload()}
+                type="butotn"
+                className="editClubPhotoBtn"
+              >
+                <MdPhotoCamera size={20} />
+              </button>
+              <button
+                onClick={() => deletePP()}
+                type="butotn"
+                className="editClubPhotoBtn"
+              >
+                <FaTimes size={18} />
+              </button>
+            </div>
+          </div>
+        )}
+      {typeof currentClub.clubData.photoURL !== "undefined" &&
+        currentClub.clubData.photoURL === "" && (
+          <div className="flex flex-col items-center group">
+            <div className="clubPhoto">
+              {windowWidth > 767 && (
+                <Avatar
+                  {...stringAvatar(
+                    `${currentClub.clubData.name}Club`,
+                    120,
+                    120
+                  )}
+                />
+              )}
+              {windowWidth < 767 && (
+                <Avatar
+                  {...stringAvatar(`${currentClub.clubData.name}Club`, 80, 80)}
+                />
+              )}
+            </div>
+            <div className="cAvatar-overlay">
+              <button
+                onClick={() => clickUpload()}
+                type="butotn"
+                className="editClubPhotoBtn"
+              >
+                <MdPhotoCamera size={20} />
+              </button>
+            </div>
+          </div>
+        )}
+      {typeof currentClub.clubData.photoURL === "undefined" && (
+        <div className="flex flex-col items-center group">
+          <div className="clubPhoto">
+            {windowWidth > 767 && (
+              <Avatar
+                {...stringAvatar(`${currentClub.clubData.name}Club`, 120, 120)}
+              />
+            )}
+            {windowWidth < 767 && (
+              <Avatar
+                {...stringAvatar(`${currentClub.clubData.name}Club`, 80, 80)}
+              />
+            )}
+          </div>
+          <div className="cAvatar-overlay">
+            <button
+              onClick={() => clickUpload()}
+              type="butotn"
+              className="editClubPhotoBtn"
+            >
+              <MdPhotoCamera size={20} />
+            </button>
+          </div>
         </div>
       )}
-      {!avatarLoading && (
-        <Fragment>
-          {typeof ppPhoto !== "undefined" && ppPhoto !== "" && (
-            <div className="flex flex-col items-center group">
-              <div className="clubPhoto">
-                {windowWidth > 767 && (
-                  <Avatar
-                    src={ppPhoto}
-                    sx={{ width: 120, height: 120, bgcolor: grey[500] }}
-                  />
-                )}
-                {windowWidth < 767 && (
-                  <Avatar
-                    src={ppPhoto}
-                    sx={{ width: 80, height: 80, bgcolor: grey[500] }}
-                  />
-                )}
-              </div>
-              <div className="cAvatar-overlay">
-                <button
-                  onClick={() => clickUpload()}
-                  type="butotn"
-                  className="editClubPhotoBtn"
-                >
-                  <MdPhotoCamera size={20} />
-                </button>
-                <button
-                  onClick={() => deletePP()}
-                  type="butotn"
-                  className="editClubPhotoBtn"
-                >
-                  <FaTimes size={18} />
-                </button>
-              </div>
-            </div>
-          )}
-          {typeof ppPhoto !== "undefined" && ppPhoto === "" && (
-            <div className="flex flex-col items-center group">
-              <div className="clubPhoto">
-                {windowWidth > 767 && (
-                  <Avatar {...stringAvatar(`${data.name}Club`, 120, 120)} />
-                )}
-                {windowWidth < 767 && (
-                  <Avatar {...stringAvatar(`${data.name}Club`, 80, 80)} />
-                )}
-              </div>
-              <div className="cAvatar-overlay">
-                <button
-                  onClick={() => clickUpload()}
-                  type="butotn"
-                  className="editClubPhotoBtn"
-                >
-                  <MdPhotoCamera size={20} />
-                </button>
-              </div>
-            </div>
-          )}
-          {typeof ppPhoto === "undefined" && (
-            <div className="flex flex-col items-center group">
-              <div className="clubPhoto">
-                {windowWidth > 767 && (
-                  <Avatar {...stringAvatar(`${data.name}Club`, 120, 120)} />
-                )}
-                {windowWidth < 767 && (
-                  <Avatar {...stringAvatar(`${data.name}Club`, 80, 80)} />
-                )}
-              </div>
-              <div className="cAvatar-overlay">
-                <button
-                  onClick={() => clickUpload()}
-                  type="butotn"
-                  className="editClubPhotoBtn"
-                >
-                  <MdPhotoCamera size={20} />
-                </button>
-              </div>
-            </div>
-          )}
-        </Fragment>
-      )}
+
       <input
         ref={fileRef}
         onChange={handleChange}

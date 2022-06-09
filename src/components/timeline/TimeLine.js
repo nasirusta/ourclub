@@ -1,38 +1,32 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useEffect } from "react";
 import { Post } from "../index";
 import ReactLoading from "react-loading";
+import { clubPageMemo, postMemo } from "../../store/selector";
+import { getPostInit } from "../../store/actions/postAction";
+import { useSelector, useDispatch } from "react-redux";
+import { Alert } from "evergreen-ui";
 
 const TimeLine = () => {
-  const [postList, setPostList] = useState([]);
-
-  const getPostList = async () => {
-    try {
-      const response = await axios.get(
-        "https://newsdata.io/api/1/news?apikey=pub_7195254a8e35b8c86dd59327155e638dbb2d&q=technology&category=science,technology,top,world",
-        {
-          headers: {
-            "Content-Type": "application/json; charset=UTF-8",
-          },
-        }
-      );
-      setPostList(response.data.results);
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  const { currentClub } = useSelector(clubPageMemo);
+  const posts = useSelector(postMemo);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    getPostList();
+    dispatch(getPostInit(currentClub));
   }, []);
+
 
   return (
     <div className="timeLine">
-      {postList.length !== 0 &&
-        postList.map((data, i) => <Post data={data} key={i} />)}
-      {postList.length === 0 && (
+      {!posts.loading && posts.contents.map((data, i) => <Post data={data} key={i} />)}
+      {posts.loading && (
         <div className="w-full flex flex-wrap items-center justify-center py-4">
           <ReactLoading type={"spin"} height={32} width={32} color="#1976d2" />
+        </div>
+      )}
+      {posts.error && (
+        <div className="block p-3 shadow border border-gray-300 bg-white">
+          <Alert intent="none" title={posts.error} />
         </div>
       )}
     </div>

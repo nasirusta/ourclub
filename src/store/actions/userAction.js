@@ -95,7 +95,8 @@ const registerInitiate = (email, password, displayName) => (dispatch) => {
               mail: email,
               photoURL: null,
             };
-            addDoc(usersCollectionRef, info).then(() => {
+            addDoc(usersCollectionRef, info).then((last) => {
+              info.recordI = last.id;
               dispatch(
                 registerSuccess(Object.assign({}, user._delegate, info))
               );
@@ -126,6 +127,7 @@ const loginInitiate = (email, password) => (dispatch) => {
                   Object.assign({}, user._delegate, {
                     username: doc.data().username,
                     club: doc.data().club,
+                    recordID: doc.id,
                   })
                 )
               );

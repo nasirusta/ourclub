@@ -1,4 +1,4 @@
-import { LeftSide, RightSide, TimeLine, SendPost } from "../../components";
+import { LeftSide, RightSide, TimeLine } from "../../components";
 import { useEffect } from "react";
 import { useWindowWidth } from "@react-hook/window-size";
 
@@ -14,7 +14,6 @@ const HomePage = () => {
         </div>
       )}
       <div className="md:w-2/4 w-full">
-        <SendPost />
         <TimeLine />
       </div>
       {windowWidth > 767 && (

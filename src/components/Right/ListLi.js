@@ -6,12 +6,12 @@ import { useEffect } from "react";
 import { useWindowWidth } from "@react-hook/window-size";
 import getSlug from "speakingurl";
 
-const ListLi = ({ title }) => {
+const ListLi = ({ data }) => {
   const windowWidth = useWindowWidth();
 
   useEffect(() => {}, [windowWidth]);
 
-  const cUrl = getSlug(title, {
+  const cUrl = getSlug(data.clubURL, {
     lang: "tr",
     symbols: false,
   });
@@ -20,14 +20,25 @@ const ListLi = ({ title }) => {
     <li>
       {windowWidth > 1024 && (
         <Link to={`/${cUrl}`}>
-          <Avatar {...stringAvatar(`${title}`)} className="mr-2" />
-          {title}
+          {data.clubAvatar === null && (
+            <Avatar {...stringAvatar(`${data.clubName}`)} className="mr-2" />
+          )}
+          {data.clubAvatar !== null && (
+            <Avatar src={data.clubAvatar} className="mr-2" />
+          )}
+          {data.clubName}
         </Link>
       )}
       {windowWidth < 1024 && (
         <Link to={`/${cUrl}`}>
-          <Avatar {...stringAvatar(`${title}`, 28, 28)} className="mr-1" />
-          <TextTruncate line={1} text={title} />
+          {data.clubAvatar === null && (
+            <Avatar
+              {...stringAvatar(`${data.clubName}`, 28, 28)}
+              className="mr-1"
+            />
+          )}
+          {data.clubAvatar !== null && <Avatar src={data.clubAvatar} />}
+          <TextTruncate line={1} text={data.clubName} />
         </Link>
       )}
     </li>

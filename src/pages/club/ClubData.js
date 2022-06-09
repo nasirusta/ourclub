@@ -1,12 +1,18 @@
-const ClubData = () => {
+const ClubData = ({ data }) => {
   return (
     <div className="ClubData">
       <div className="box">
-        <span className="title">867</span>
+        {data.clubData.members && (
+          <span className="title">{data.clubData.members.length}</span>
+        )}
+        {!data.clubData.members && <span className="title"> 0</span>}
         <span className="content">Üye</span>
       </div>
       <div className="box">
-        <span className="title">924</span>
+        {data.clubData.contents && (
+          <span className="title">{data.clubData.contents.length}</span>
+        )}
+        {!data.clubData.contents && <span className="title"> 0</span>}
         <span className="content">Paylaşım</span>
       </div>
     </div>

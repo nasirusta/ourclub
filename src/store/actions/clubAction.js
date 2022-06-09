@@ -11,7 +11,9 @@ import {
   doc,
   updateDoc,
 } from "firebase/firestore";
+import { getPostInit } from "./postAction";
 const clubsCollectionRef = collection(db, "clubs");
+const postsCollectionRef = collection(db, "posts");
 
 const createClubStart = () => ({
   type: types.CREATE_CLUB_START,
@@ -175,4 +177,259 @@ const editClubInitiate = (values, username, cid) => (dispatch) => {
   });
 };
 
-export { createClub, editClubInitiate };
+const currentClubContent = () => ({
+  type: types.CURRENT_CLUB_CONTENT,
+});
+
+const currentClubStart = () => ({
+  type: types.CURRENT_CLUB_START,
+});
+
+const currentClubFail = (error) => ({
+  type: types.CURRENT_CLUB_FAIL,
+  payload: error,
+});
+
+const currentClubSuccess = (club) => ({
+  type: types.CURRENT_CLUB_SUCCESS,
+  payload: club,
+});
+
+const currentClubInit = (club) => (dispatch) => {
+  return new Promise(async (resolve, reject) => {
+    dispatch(currentClubStart());
+
+    const q = query(clubsCollectionRef, where("clubURL", "==", club));
+    const querySnapshot = await getDocs(q);
+    let countC = [];
+    querySnapshot.forEach((doc) => {
+      countC.push({ clubID: doc.id, clubData: doc.data() });
+      dispatch(currentClubSuccess({ clubID: doc.id, clubData: doc.data() }));
+    });
+
+    if (countC.length > 0) {
+      resolve(true);
+    } else {
+      dispatch(currentClubFail("Club not found!"));
+      reject(false);
+    }
+  });
+};
+
+const clubEditAvatar = (id, url) => (dispatch) => {
+  dispatch(currentClubStart());
+
+  if (auth.currentUser) {
+    const userDoc = doc(db, "clubs", id);
+    updateDoc(userDoc, {
+      photoURL: url,
+    }).then(() => {
+      getDoc(userDoc)
+        .then((doc) => {
+          dispatch(
+            currentClubSuccess({ clubID: doc.id, clubData: doc.data() })
+          );
+        })
+        .catch((error) => {
+          dispatch(currentClubFail(error));
+        });
+    });
+  } else {
+    dispatch(currentClubFail("Club avatar edit error!"));
+  }
+};
+
+const clubDeleteAvatar = (id) => (dispatch) => {
+  dispatch(currentClubStart());
+
+  if (auth.currentUser) {
+    const userDoc = doc(db, "clubs", id);
+    updateDoc(userDoc, {
+      photoURL: "",
+    }).then(() => {
+      getDoc(userDoc)
+        .then((doc) => {
+          dispatch(
+            currentClubSuccess({ clubID: doc.id, clubData: doc.data() })
+          );
+        })
+        .catch((error) => {
+          dispatch(currentClubFail(error));
+        });
+    });
+  } else {
+    dispatch(currentClubFail("Club avatar delete error!"));
+  }
+};
+
+const sendClubRequest = (currentUser, data) => (dispatch) => {
+  return new Promise(async (resolve, reject) => {
+    dispatch(currentClubStart());
+
+    if (auth.currentUser) {
+      const clubDoc = doc(db, "clubs", data.clubID);
+      const userDoc = doc(db, "users", currentUser.recordID);
+      let clubMembers = !data.clubData.members ? [] : data.clubData.members;
+
+      const d = new Date();
+      const reqUser = {
+        username: currentUser.username,
+        uid: currentUser.uid,
+        subscribed_time: d.getTime(),
+      };
+
+      updateDoc(clubDoc, {
+        members: [...clubMembers, reqUser],
+      }).then(() => {
+        getDoc(clubDoc)
+          .then((doc) => {
+            let userClubs = !currentUser.subscribed_clubs
+              ? []
+              : currentUser.subscribed_clubs;
+
+            const addClubObj = {
+              clubName: data.clubData.name,
+              clubURL: data.clubData.clubURL,
+              clubAvatar: data.clubData?.photoURL,
+              clubID: data.clubID,
+              subscribed_time: d.getTime(),
+              userRecordID: currentUser.recordID,
+            };
+
+            updateDoc(userDoc, {
+              subscribed_clubs: [...userClubs, addClubObj],
+            }).then(() => {
+              dispatch(
+                currentClubSuccess({ clubID: doc.id, clubData: doc.data() })
+              );
+              resolve(true);
+            });
+          })
+          .catch((error) => {
+            reject(false);
+            dispatch(currentClubFail(error));
+          });
+      });
+    } else {
+      reject(false);
+      dispatch(currentClubFail("Send request error!"));
+    }
+  });
+};
+
+const clubDisFollow = (currentUser, data) => (dispatch) => {
+  return new Promise(async (resolve, reject) => {
+    dispatch(currentClubStart());
+
+    if (auth.currentUser) {
+      const clubDoc = doc(db, "clubs", data.clubID);
+      const userDoc = doc(db, "users", currentUser.recordID);
+
+      const reqUser = data.clubData.members.filter(
+        (row) => row.uid !== currentUser.uid
+      );
+      let getUser;
+      if (reqUser.length < 1) {
+        getUser = [];
+      } else {
+        getUser = [...data.clubData.members, reqUser];
+      }
+
+      updateDoc(clubDoc, {
+        members: getUser,
+      }).then(() => {
+        getDoc(clubDoc)
+          .then((doc) => {
+            getDoc(userDoc).then((us) => {
+              const disClubObj = us
+                .data()
+                .subscribed_clubs.filter(
+                  (row) => row.userRecordID !== currentUser.recordID
+                );
+
+              let clubArray;
+              if (disClubObj.length < 1) {
+                clubArray = [];
+              } else {
+                clubArray = [...us.data().subscribed_clubs, disClubObj];
+              }
+
+              updateDoc(userDoc, { subscribed_clubs: clubArray }).then(() => {
+                dispatch(
+                  currentClubSuccess({ clubID: doc.id, clubData: doc.data() })
+                );
+                resolve(true);
+              });
+            });
+          })
+          .catch((error) => {
+            reject(false);
+            dispatch(currentClubFail(error));
+          });
+      });
+    } else {
+      reject(false);
+      dispatch(currentClubFail("Send request error!"));
+    }
+  });
+};
+
+const sendContent = (values, club, currentUser) => (dispatch) => {
+  return new Promise(async (resolve, reject) => {
+    dispatch(currentClubContent());
+
+    if (auth.currentUser) {
+      const userDoc = doc(db, "clubs", club.clubID);
+
+      const d = new Date();
+      const post = {
+        post_time: d.getTime(),
+        text: values.text,
+        club: club.clubData.name,
+        clubAvatar: club.clubData?.photoURL,
+        clubURL: club.clubData.clubURL,
+        user: currentUser.uid,
+      };
+
+      let clubContents = !club.clubData.contents ? [] : club.clubData.contents;
+
+      addDoc(postsCollectionRef, post)
+        .then((last) => {
+          post.postID = last.id;
+          updateDoc(userDoc, {
+            contents: [...clubContents, post],
+          }).then(() => {
+            getDoc(userDoc)
+              .then((doc) => {
+                const newData = { clubID: doc.id, clubData: doc.data() };
+                dispatch(currentClubSuccess(newData));
+                dispatch(getPostInit(newData));
+                resolve(true);
+              })
+              .catch((error) => {
+                reject(false);
+                dispatch(currentClubFail(error));
+              });
+          });
+        })
+        .catch((error) => {
+          dispatch(currentClubFail(error));
+          reject(false);
+        });
+    } else {
+      reject(false);
+      dispatch(currentClubFail("Send request error!"));
+    }
+  });
+};
+
+export {
+  createClub,
+  editClubInitiate,
+  currentClubInit,
+  clubEditAvatar,
+  clubDeleteAvatar,
+  sendClubRequest,
+  clubDisFollow,
+  sendContent,
+};

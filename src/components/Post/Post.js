@@ -39,9 +39,10 @@ const Post = ({ data }) => {
     <Fragment>
       <div className="postData">
         <PostHeader
-          name={data.source_id}
-          date={data.pubDate}
-          title={data.title}
+          name={data.club}
+          avatar={data.clubAvatar}
+          date={data.post_time}
+          clubURL={data.clubURL}
         />
         <PostContent content={data.content} media={data.image_url} />
         <Fragment>

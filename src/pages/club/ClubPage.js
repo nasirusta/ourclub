@@ -1,4 +1,3 @@
-import StickyHeader from "./StickyHeader";
 import ClubHeader from "./ClubHeader";
 import ClubRight from "./ClubRight";
 import ClubLeft from "./ClubLeft";
@@ -7,26 +6,25 @@ import { useEffect, useState, Fragment } from "react";
 import { useWindowWidth } from "@react-hook/window-size";
 import ReactLoading from "react-loading";
 import { useParams } from "react-router-dom";
-import { db } from "../../firebase";
-import { collection, getDocs, query, where } from "firebase/firestore";
-const clubsCollectionRef = collection(db, "clubs");
+import { useDispatch } from "react-redux";
+import { currentClubInit } from "../../store/actions/clubAction";
 
 const ClubPage = () => {
   const windowWidth = useWindowWidth();
+  const [loading, setLoading] = useState(true);
   const [currentClub, setCurrentClub] = useState(false);
   let { club } = useParams();
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    const q = query(clubsCollectionRef, where("clubURL", "==", club));
-
-    getDocs(q)
-      .then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          setCurrentClub({ clubID: doc.id, clubData: doc.data() });
-        });
+    dispatch(currentClubInit(club))
+      .then(() => {
+        setLoading(false);
+        setCurrentClub(true);
       })
-      .catch((error) => {
-        console.log(error);
+      .catch(() => {
+        setLoading(false);
+        setCurrentClub(false);
       });
   }, [windowWidth]);
 
@@ -38,7 +36,7 @@ const ClubPage = () => {
         </div>
       )}
       <div className="md:w-2/4 w-full ">
-        {!currentClub && (
+        {loading && (
           <div className="w-full flex flex-wrap items-center justify-center py-4">
             <ReactLoading
               type={"spin"}
@@ -48,12 +46,36 @@ const ClubPage = () => {
             />
           </div>
         )}
-        {currentClub && (
+        {!loading && (
           <Fragment>
-            <StickyHeader name={currentClub?.clubData.name} />
-            <ClubHeader currentClub={currentClub} />
-            <SendPost />
-            {/* <TimeLine /> */}
+            {currentClub && (
+              <Fragment>
+                <ClubHeader />
+                <SendPost />
+                <TimeLine />
+              </Fragment>
+            )}
+            {!currentClub && (
+              <div className="mx-6 my-4">
+                <div className="block shadow-lg space-y-2 divide-y-2 p-4 border border-gray-300 bg-white">
+                  <h1
+                    className="block font-semibold uppercase text-gray-500"
+                    lang="tr"
+                  >
+                    İçeriğe erişilemiyor
+                  </h1>
+                  <p className="block py-3 text-sm text-gray-500">
+                    Böyle bir kulüp veya içerik yok
+                    <a
+                      href="/"
+                      className="block max-w-max pt-2 underline text-blue-400"
+                    >
+                      Anasayfaya dön
+                    </a>
+                  </p>
+                </div>
+              </div>
+            )}
           </Fragment>
         )}
         {windowWidth < 768 && <MobileFooter />}

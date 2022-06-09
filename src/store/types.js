@@ -31,3 +31,14 @@ export const EDIT_CLUB_FAIL = "EDIT_CLUB_FAIL";
 // Progress type
 export const PROGRESS_START = "PROGRESS_START";
 export const PROGRESS_END = "PROGRESS_END";
+
+// Club Page type
+export const CURRENT_CLUB_CONTENT = "CURRENT_CLUB_CONTENT";
+export const CURRENT_CLUB_START = "CURRENT_CLUB_START";
+export const CURRENT_CLUB_SUCCESS = "CURRENT_CLUB_SUCCESS";
+export const CURRENT_CLUB_FAIL = "CURRENT_CLUB_FAIL";
+
+// Post type
+export const GET_POST_START = "GET_POST_START";
+export const GET_POST_SUCCESS = "GET_POST_SUCCESS";
+export const GET_POST_FAIL = "GET_POST_FAIL";

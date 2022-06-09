@@ -4,16 +4,20 @@ import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import userReduce from "./reducers/userReduce";
 import progressReduce from "./reducers/progressReduce";
+import clubPageReduce from "./reducers/clubPageReduce";
+import postReduce from "./reducers/postReduce";
 
 const reducers = combineReducers({
   user: userReduce,
   progress: progressReduce,
+  clubPage: clubPageReduce,
+  posts: postReduce,
 });
 
 const persistConfig = {
   key: "root",
   storage,
-  blacklist: ["progress"],
+  blacklist: ["progress", "clubPage", "posts"],
 };
 
 const persistedReducer = persistReducer(persistConfig, reducers);
