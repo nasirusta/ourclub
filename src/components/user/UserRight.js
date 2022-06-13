@@ -13,12 +13,12 @@ const UserRight = () => {
       <nav>
         <ul>
           <li>
-            <Link to="/">
+            <a href="/">
               <div className="iconSpan">
                 <FaHome size={24} />
               </div>
               <div className="textSpan">Anasayfa</div>
-            </Link>
+            </a>
           </li>
           <li>
             <a

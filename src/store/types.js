@@ -42,3 +42,6 @@ export const CURRENT_CLUB_FAIL = "CURRENT_CLUB_FAIL";
 export const GET_POST_START = "GET_POST_START";
 export const GET_POST_SUCCESS = "GET_POST_SUCCESS";
 export const GET_POST_FAIL = "GET_POST_FAIL";
+
+// Subscribed Clubs type
+export const SET_SUBSCRIBED_CLUB = "SET_SUBSCRIBED_CLUB";

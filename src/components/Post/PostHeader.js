@@ -25,6 +25,12 @@ const PostHeader = ({ name, avatar, date, clubURL }) => {
 
   useEffect(() => {}, [windowWidth]);
 
+  var timestamp = 1607110465663
+  
+var datem = new Date(date);
+console.log(datem.getTime())
+// console.log(datem)
+
   return (
     <div className="postHeader">
       {avatar !== null && (
@@ -32,9 +38,7 @@ const PostHeader = ({ name, avatar, date, clubURL }) => {
           {windowWidth > 767 && (
             <CardHeader
               subheader={
-                <span>{`${d.getHours()}:${d.getMinutes()} / ${d.getDate()} ${
-                  months[d.getMonth()]
-                } ${d.getFullYear()}`}</span>
+                <span>{`${d.toTimeString()}`}</span>
               }
               avatar={
                 <a href={clubURL}>

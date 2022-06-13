@@ -4,6 +4,7 @@ const default_state = {
   loading: false,
   currentUser: null,
   auth: false,
+  subscribed_clubs: [],
   error: null,
 };
 
@@ -28,6 +29,11 @@ const userReduce = (state = default_state, action) => {
         auth: true,
         error: null,
         currentUser: action.payload,
+      };
+    case types.SET_SUBSCRIBED_CLUB:
+      return {
+        ...state,
+        subscribed_clubs: action.payload,
       };
     case types.REGISTER_FAIL:
     case types.LOGIN_FAIL:

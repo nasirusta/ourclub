@@ -32,7 +32,7 @@ const CreateClubPage = () => {
     validationSchema,
     onSubmit: async (values) => {
       dispatch(
-        createClub(values, user.currentUser.username, user.currentUser.uid)
+        createClub(values, user.currentUser.username, user.currentUser.recordID)
       )
         .then((res) => {
           navigate(`/${res.clubURL}`);

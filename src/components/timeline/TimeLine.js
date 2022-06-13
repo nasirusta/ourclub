@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Post } from "../index";
 import ReactLoading from "react-loading";
-import { clubPageMemo, postMemo } from "../../store/selector";
+import { clubPageMemo, postMemo, userMemo } from "../../store/selector";
 import { getPostInit } from "../../store/actions/postAction";
 import { useSelector, useDispatch } from "react-redux";
 import { Alert } from "evergreen-ui";
@@ -9,16 +9,17 @@ import { Alert } from "evergreen-ui";
 const TimeLine = () => {
   const { currentClub } = useSelector(clubPageMemo);
   const posts = useSelector(postMemo);
+  const { subscribed_clubs } = useSelector(userMemo);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(getPostInit(currentClub));
+    dispatch(getPostInit(currentClub, subscribed_clubs));
   }, []);
-
 
   return (
     <div className="timeLine">
-      {!posts.loading && posts.contents.map((data, i) => <Post data={data} key={i} />)}
+      {!posts.loading &&
+        posts.contents.map((data, i) => <Post data={data} key={i} />)}
       {posts.loading && (
         <div className="w-full flex flex-wrap items-center justify-center py-4">
           <ReactLoading type={"spin"} height={32} width={32} color="#1976d2" />

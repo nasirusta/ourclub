@@ -96,10 +96,14 @@ const registerInitiate = (email, password, displayName) => (dispatch) => {
               photoURL: null,
             };
             addDoc(usersCollectionRef, info).then((last) => {
-              info.recordI = last.id;
+              info.recordID = last.id;
               dispatch(
                 registerSuccess(Object.assign({}, user._delegate, info))
               );
+              dispatch({
+                type: types.SET_SUBSCRIBED_CLUB,
+                payload:[],
+              });
               resolve(true);
             });
           });
@@ -122,6 +126,9 @@ const loginInitiate = (email, password) => (dispatch) => {
         getDocs(q)
           .then((querySnapshot) => {
             querySnapshot.forEach((doc) => {
+              let subscribed_clubs = !doc.data().subscribed_clubs
+                ? []
+                : doc.data().subscribed_clubs;
               dispatch(
                 loginSuccess(
                   Object.assign({}, user._delegate, {
@@ -131,6 +138,11 @@ const loginInitiate = (email, password) => (dispatch) => {
                   })
                 )
               );
+
+              dispatch({
+                type: types.SET_SUBSCRIBED_CLUB,
+                payload: subscribed_clubs,
+              });
               resolve(true);
             });
           })

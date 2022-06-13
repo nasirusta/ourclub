@@ -6,6 +6,7 @@ const HomePage = () => {
   const windowWidth = useWindowWidth();
 
   useEffect(() => {}, [windowWidth]);
+
   return (
     <div className="flex flex-wrap w-full mt-4">
       {windowWidth > 767 && (

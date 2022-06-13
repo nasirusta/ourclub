@@ -13,12 +13,12 @@ import { TiCancel } from "react-icons/ti";
 
 const ClubEvent = ({ data }) => {
   const windowWidth = useWindowWidth();
-  const { currentUser } = useSelector(userMemo);
+  const { currentUser, subscribed_clubs } = useSelector(userMemo);
   const [userCheck, setCheck] = useState(false);
   const dispatch = useDispatch();
 
   const sendRequest = () => {
-    dispatch(sendClubRequest(currentUser, data))
+    dispatch(sendClubRequest(subscribed_clubs, currentUser, data))
       .then(() => {
         toaster.success("Üye olundu");
       })
@@ -28,7 +28,7 @@ const ClubEvent = ({ data }) => {
   };
 
   const disfollow = () => {
-    dispatch(clubDisFollow(currentUser, data))
+    dispatch(clubDisFollow(subscribed_clubs, currentUser, data))
       .then(() => {
         toaster.success("Üyelikten çıktınız");
       })

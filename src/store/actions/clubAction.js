@@ -43,6 +43,16 @@ const editClubFail = (error) => ({
   payload: error,
 });
 
+const GetRecordId = async (uid) => {
+  const q = query(clubsCollectionRef, where("uid", "==", uid));
+  const getIdDoc = await getDocs(q);
+  const ID = getIdDoc.docs.map((d) => {
+    return { id: d.id };
+  });
+
+  return ID;
+};
+
 const createClub = (values, username, uid) => (dispatch) => {
   return new Promise(async (resolve, reject) => {
     dispatch(createClubStart());
@@ -69,8 +79,7 @@ const createClub = (values, username, uid) => (dispatch) => {
           }),
         };
         addDoc(clubsCollectionRef, info).then(async (res) => {
-          const rec_id = await GetRecordId(uid);
-          const userDoc = doc(db, "users", rec_id[0].id);
+          const userDoc = doc(db, "users", uid);
           updateDoc(userDoc, {
             club: res.id,
           })
@@ -101,16 +110,6 @@ const createClub = (values, username, uid) => (dispatch) => {
       );
     }
   });
-};
-
-const GetRecordId = async (uid) => {
-  const q = query(clubsCollectionRef, where("uid", "==", uid));
-  const getIdDoc = await getDocs(q);
-  const ID = getIdDoc.docs.map((d) => {
-    return { id: d.id };
-  });
-
-  return ID;
 };
 
 const editClubInitiate = (values, username, cid) => (dispatch) => {
@@ -262,7 +261,7 @@ const clubDeleteAvatar = (id) => (dispatch) => {
   }
 };
 
-const sendClubRequest = (currentUser, data) => (dispatch) => {
+const sendClubRequest = (subscribed_clubs, currentUser, data) => (dispatch) => {
   return new Promise(async (resolve, reject) => {
     dispatch(currentClubStart());
 
@@ -283,22 +282,28 @@ const sendClubRequest = (currentUser, data) => (dispatch) => {
       }).then(() => {
         getDoc(clubDoc)
           .then((doc) => {
-            let userClubs = !currentUser.subscribed_clubs
-              ? []
-              : currentUser.subscribed_clubs;
+            let clubAvatarOnj = !data.clubData.photoURL
+              ? null
+              : data.clubData.photoURL;
 
             const addClubObj = {
               clubName: data.clubData.name,
               clubURL: data.clubData.clubURL,
-              clubAvatar: data.clubData?.photoURL,
+              clubAvatar: clubAvatarOnj,
               clubID: data.clubID,
               subscribed_time: d.getTime(),
               userRecordID: currentUser.recordID,
             };
 
+            console.log("Mevcut: ", subscribed_clubs);
+
             updateDoc(userDoc, {
-              subscribed_clubs: [...userClubs, addClubObj],
+              subscribed_clubs: [...subscribed_clubs, addClubObj],
             }).then(() => {
+              dispatch({
+                type: types.SET_SUBSCRIBED_CLUB,
+                payload: [...subscribed_clubs, addClubObj],
+              });
               dispatch(
                 currentClubSuccess({ clubID: doc.id, clubData: doc.data() })
               );
@@ -317,62 +322,63 @@ const sendClubRequest = (currentUser, data) => (dispatch) => {
   });
 };
 
-const clubDisFollow = (currentUser, data) => (dispatch) => {
-  return new Promise(async (resolve, reject) => {
-    dispatch(currentClubStart());
+const clubDisFollow =
+  (subscribed_clubsGet, currentUser, data) => (dispatch) => {
+    return new Promise(async (resolve, reject) => {
+      dispatch(currentClubStart());
 
-    if (auth.currentUser) {
-      const clubDoc = doc(db, "clubs", data.clubID);
-      const userDoc = doc(db, "users", currentUser.recordID);
+      if (auth.currentUser) {
+        const clubDoc = doc(db, "clubs", data.clubID);
+        const userDoc = doc(db, "users", currentUser.recordID);
 
-      const reqUser = data.clubData.members.filter(
-        (row) => row.uid !== currentUser.uid
-      );
-      let getUser;
-      if (reqUser.length < 1) {
-        getUser = [];
-      } else {
-        getUser = [...data.clubData.members, reqUser];
-      }
+        const reqUser = data.clubData.members.filter(
+          (row) => row.uid !== currentUser.uid
+        );
+        let getUser;
+        if (reqUser.length < 1) {
+          getUser = [];
+        } else {
+          getUser = [...data.clubData.members, reqUser];
+        }
 
-      updateDoc(clubDoc, {
-        members: getUser,
-      }).then(() => {
-        getDoc(clubDoc)
-          .then((doc) => {
-            getDoc(userDoc).then((us) => {
-              const disClubObj = us
-                .data()
-                .subscribed_clubs.filter(
-                  (row) => row.userRecordID !== currentUser.recordID
+        updateDoc(clubDoc, {
+          members: getUser,
+        }).then(() => {
+          getDoc(clubDoc)
+            .then((doc) => {
+              getDoc(userDoc).then((us) => {
+                const disClubObj = subscribed_clubsGet.filter(
+                  (row) => row.clubID !== data.clubID
                 );
 
-              let clubArray;
-              if (disClubObj.length < 1) {
-                clubArray = [];
-              } else {
-                clubArray = [...us.data().subscribed_clubs, disClubObj];
-              }
-
-              updateDoc(userDoc, { subscribed_clubs: clubArray }).then(() => {
-                dispatch(
-                  currentClubSuccess({ clubID: doc.id, clubData: doc.data() })
+                updateDoc(userDoc, { subscribed_clubs: disClubObj }).then(
+                  () => {
+                    dispatch({
+                      type: types.SET_SUBSCRIBED_CLUB,
+                      payload: disClubObj,
+                    });
+                    dispatch(
+                      currentClubSuccess({
+                        clubID: doc.id,
+                        clubData: doc.data(),
+                      })
+                    );
+                    resolve(true);
+                  }
                 );
-                resolve(true);
               });
+            })
+            .catch((error) => {
+              reject(false);
+              dispatch(currentClubFail("Burası"));
             });
-          })
-          .catch((error) => {
-            reject(false);
-            dispatch(currentClubFail(error));
-          });
-      });
-    } else {
-      reject(false);
-      dispatch(currentClubFail("Send request error!"));
-    }
-  });
-};
+        });
+      } else {
+        reject(false);
+        dispatch(currentClubFail("Send request error!"));
+      }
+    });
+  };
 
 const sendContent = (values, club, currentUser) => (dispatch) => {
   return new Promise(async (resolve, reject) => {
@@ -381,12 +387,17 @@ const sendContent = (values, club, currentUser) => (dispatch) => {
     if (auth.currentUser) {
       const userDoc = doc(db, "clubs", club.clubID);
 
+      let clubAvatarOnj = !club.clubData.photoURL
+        ? null
+        : club.clubData.photoURL;
+
       const d = new Date();
       const post = {
         post_time: d.getTime(),
         text: values.text,
+        clubID: club.clubID,
         club: club.clubData.name,
-        clubAvatar: club.clubData?.photoURL,
+        clubAvatar: clubAvatarOnj,
         clubURL: club.clubData.clubURL,
         user: currentUser.uid,
       };
