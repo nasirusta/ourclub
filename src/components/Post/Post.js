@@ -1,10 +1,20 @@
-import { useEffect, useState, Fragment } from "react";
-import axios from "axios";
+import { useEffect, useState, Fragment, memo } from "react";
 import PostHeader from "./PostHeader";
 import PostContent from "./PostContent";
 import PostActions from "./PostActions";
 import PostComments from "./PostComments";
 import SendComment from "./SendComment";
+import { db } from "../../firebase";
+import {
+  collection,
+  getDocs,
+  query,
+  where,
+  orderBy,
+  doc,
+  getDoc,
+} from "firebase/firestore";
+const commentsCollectionRef = collection(db, "comments");
 
 const Post = ({ data }) => {
   const [commentList, setCommentList] = useState([]);
@@ -16,52 +26,61 @@ const Post = ({ data }) => {
   };
 
   const getCommentList = async () => {
-    try {
-      const response = await axios.get(
-        "https://jsonplaceholder.typicode.com/posts/1/comments",
-        {
-          headers: {
-            "Content-Type": "application/json; charset=UTF-8",
-          },
-        }
-      );
-      setCommentList(response.data);
-    } catch (err) {
-      console.error(err);
-    }
+    let q = query(
+      commentsCollectionRef,
+      orderBy("comment_time", "asc"),
+      where("postID", "==", data.postID)
+    );
+
+    const getRecordDoc = await getDocs(q);
+    const record = getRecordDoc.docs.map(async (d) => {
+      const docRef = doc(db, "users", d.data().user);
+      const docSnap = await getDoc(docRef);
+
+      return {
+        commetData: Object.assign({}, d.data(), { id: d.id }),
+        user: docSnap.data(),
+      };
+    });
+    const resolved = await Promise.all(record);
+    console.log(resolved);
+    setCommentList(resolved);
   };
 
   useEffect(() => {
+    console.log("Post");
     getCommentList();
   }, []);
 
   return (
-    <Fragment>
-      <div className="postData">
-        <PostHeader
-          name={data.club}
-          avatar={data.clubAvatar}
-          date={data.post_time}
-          clubURL={data.clubURL}
+    <div className="postData">
+      <PostHeader
+        name={data.club}
+        avatar={data.clubAvatar}
+        date={data.post_time}
+        clubURL={data.clubURL}
+      />
+      <PostContent content={data.text} media={data.image_url} />
+      <Fragment>
+        <PostActions />
+        <SendComment
+          postID={data.postID}
+          commentList={commentList}
+          setCommentList={setCommentList}
         />
-        <PostContent content={data.content} media={data.image_url} />
-        <Fragment>
-          <PostActions />
-          <SendComment />
-        </Fragment>
-        <PostComments commentData={slice} />
-        {noOfElement < commentList.length && (
-          <button
-            className="loadMoreComment"
-            type="button"
-            onClick={() => loadMore()}
-          >
-            Diğer yorumları göster ({commentList.length - noOfElement})
-          </button>
-        )}
-      </div>
-    </Fragment>
+      </Fragment>
+      <PostComments commentData={slice} />
+      {noOfElement < commentList.length && (
+        <button
+          className="loadMoreComment"
+          type="button"
+          onClick={() => loadMore()}
+        >
+          Diğer yorumları göster ({commentList.length - noOfElement})
+        </button>
+      )}
+    </div>
   );
 };
 
-export default Post;
+export default memo(Post);

@@ -295,8 +295,6 @@ const sendClubRequest = (subscribed_clubs, currentUser, data) => (dispatch) => {
               userRecordID: currentUser.recordID,
             };
 
-            console.log("Mevcut: ", subscribed_clubs);
-
             updateDoc(userDoc, {
               subscribed_clubs: [...subscribed_clubs, addClubObj],
             }).then(() => {
@@ -387,9 +385,7 @@ const sendContent = (values, club, currentUser) => (dispatch) => {
     if (auth.currentUser) {
       const userDoc = doc(db, "clubs", club.clubID);
 
-      let clubAvatarOnj = !club.clubData.photoURL
-        ? null
-        : club.clubData.photoURL;
+      let clubAvatarOnj = !club.clubData.photoURL ? "" : club.clubData.photoURL;
 
       const d = new Date();
       const post = {

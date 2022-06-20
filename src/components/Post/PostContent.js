@@ -1,4 +1,4 @@
-import { Typography, CardContent, CardMedia } from "@mui/material";
+import { CardContent, CardMedia } from "@mui/material";
 import ReadMoreReact from "read-more-react";
 
 const PostContent = ({ content, media }) => {
@@ -6,8 +6,17 @@ const PostContent = ({ content, media }) => {
     <div className="postBody">
       {media && <CardMedia component="img" height="194" image={media} />}
       {content && (
-        <CardContent>
-          <Typography component={"span"} variant="body1" color="text.secondary">
+        <CardContent
+          sx={{
+            paddingTop: 1,
+            paddingBottom: 1,
+            marginBottom: 0,
+            "&:last-child": {
+              paddingBottom: 1,
+            },
+          }}
+        >
+          <div className="block text-sm text-gray-600">
             <ReadMoreReact
               text={content}
               min={180}
@@ -16,7 +25,7 @@ const PostContent = ({ content, media }) => {
               readMoreText={"Devamını oku..."}
               className="read-more-button"
             />
-          </Typography>
+          </div>
         </CardContent>
       )}
     </div>

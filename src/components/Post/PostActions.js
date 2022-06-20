@@ -10,7 +10,7 @@ const PostActions = () => {
       <CardActions sx={{ p: 0, pl: 1.5 }}>
         <PostLike />
         <IconButton aria-label="comment">
-          <FaComment size={20} />
+          <FaComment size={18} />
           <span className="text-base mx-1">9</span>
         </IconButton>
         <PostShare />

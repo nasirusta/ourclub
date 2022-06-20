@@ -47,7 +47,7 @@ const PostShare = () => {
       <Box sx={{ display: "flex", alignItems: "center", textAlign: "center" }}>
         <Tooltip title="Paylaş">
           <IconButton onClick={handleClick} size="small">
-            <FaShare size={21} />
+            <FaShare size={19} />
             <span className="text-base mx-1">619k</span>
           </IconButton>
         </Tooltip>

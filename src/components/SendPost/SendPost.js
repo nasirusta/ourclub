@@ -8,16 +8,38 @@ import { useFormik } from "formik";
 import { userMemo, clubPageMemo } from "../../store/selector";
 import { useDispatch, useSelector } from "react-redux";
 import { sendContent } from "../../store/actions/clubAction";
-import { getPostInit } from "../../store/actions/postAction";
 
 const SendPost = () => {
   const windowWidth = useWindowWidth();
+  const [sendPostState, setSendPostState] = useState(false);
   const [clickField, setClick] = useState(false);
   const { currentUser } = useSelector(userMemo);
   const { currentClub, contentLoading } = useSelector(clubPageMemo);
   const dispatch = useDispatch();
   const handleClick = () => {
     setClick(true);
+  };
+
+  const ClubPhoto = ({ windowWidth }) => {
+    return (
+      <Fragment>
+        {currentUser.providerData[0]?.photoURL === null && (
+          <div className="block">
+            {windowWidth > 767 && (
+              <Avatar {...stringAvatar(currentUser.displayName, 50, 50)} />
+            )}
+            {windowWidth < 767 && (
+              <Avatar {...stringAvatar(currentUser.displayName, 32, 32)} />
+            )}
+          </div>
+        )}
+        {currentUser.providerData[0]?.photoURL !== null && (
+          <div className="block">
+            <Avatar src={`${currentUser.providerData[0]?.photoURL}`} />
+          </div>
+        )}
+      </Fragment>
+    );
   };
 
   const share = () => {
@@ -47,69 +69,66 @@ const SendPost = () => {
 
   const sendPostReq = (values) => {
     dispatch(sendContent(values, currentClub, currentUser))
-      .then((res) => {
+      .then(() => {
         setClick(false);
-        // dispatch(getPostInit(currentClub));
-        console.log(res);
       })
       .catch((e) => {
         console.log(e);
       });
   };
 
-  useEffect(() => {}, [windowWidth]);
+  useEffect(() => {
+    if (currentClub.clubData.members) {
+      const subClub = currentClub.clubData.members.filter(
+        (row) => row.uid === currentUser.uid
+      );
+      subClub.length > 0 ? setSendPostState(true) : setSendPostState(false);
+    } else {
+      setSendPostState(false);
+    }
+  }, [windowWidth, currentClub]);
 
   return (
-    <div className="sendPost">
-      {contentLoading && (
-        <div className="w-full flex flex-wrap items-center justify-center py-4">
-          <ReactLoading type={"bubbles"} color="#1976d2" height={32} />
+    <Fragment>
+      {sendPostState && (
+        <div className="sendPost">
+          {contentLoading && (
+            <div className="w-full flex flex-wrap items-center justify-center py-4">
+              <ReactLoading type={"bubbles"} color="#1976d2" height={32} />
+            </div>
+          )}
+          {!contentLoading && (
+            <Fragment>
+              <div className="body">
+                <ClubPhoto windowWidth={windowWidth} />
+                <div
+                  className="postField"
+                  onClick={() => {
+                    handleClick();
+                  }}
+                >
+                  {clickField ? share() : shareDisabled()}
+                </div>
+              </div>
+              <div className="w-full flex flex-row-reverse my-2">
+                {clickField ? (
+                  <Button
+                    onClick={handleSubmit}
+                    size="small"
+                    variant="contained"
+                    endIcon={<Send />}
+                  >
+                    Paylaş
+                  </Button>
+                ) : (
+                  ""
+                )}
+              </div>
+            </Fragment>
+          )}
         </div>
       )}
-      {!contentLoading && (
-        <Fragment>
-          <div className="body">
-            {currentUser.providerData[0]?.photoURL === null && (
-              <div className="block">
-                {windowWidth > 767 && (
-                  <Avatar {...stringAvatar(currentUser.username, 50, 50)} />
-                )}
-                {windowWidth < 767 && (
-                  <Avatar {...stringAvatar(currentUser.username, 32, 32)} />
-                )}
-              </div>
-            )}
-            {currentUser.providerData[0]?.photoURL !== null && (
-              <div className="block">
-                <Avatar src={`${currentUser.providerData[0]?.photoURL}`} />
-              </div>
-            )}
-            <div
-              className="postField"
-              onClick={() => {
-                handleClick();
-              }}
-            >
-              {clickField ? share() : shareDisabled()}
-            </div>
-          </div>
-          <div className="w-full flex flex-row-reverse my-2">
-            {clickField ? (
-              <Button
-                onClick={handleSubmit}
-                size="small"
-                variant="contained"
-                endIcon={<Send />}
-              >
-                Paylaş
-              </Button>
-            ) : (
-              ""
-            )}
-          </div>
-        </Fragment>
-      )}
-    </div>
+    </Fragment>
   );
 };
 

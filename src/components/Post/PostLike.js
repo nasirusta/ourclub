@@ -5,7 +5,7 @@ import { MdFavorite } from "react-icons/md";
 const liked = (count) => {
   return (
     <Fragment>
-      <MdFavorite size={24} className="text-red-400" />
+      <MdFavorite size={22} className="text-red-400" />
       <span className="text-base mx-1">{count}</span>
     </Fragment>
   );
@@ -14,7 +14,7 @@ const liked = (count) => {
 const noLiked = (count) => {
   return (
     <Fragment>
-      <MdFavorite size={24} />
+      <MdFavorite size={22} />
       <span className="text-base mx-1">{count}</span>
     </Fragment>
   );

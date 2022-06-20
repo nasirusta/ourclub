@@ -1,3 +1,4 @@
+import { Fragment, memo } from "react";
 import {
   Avatar,
   ListItemAvatar,
@@ -7,6 +8,11 @@ import {
 } from "@mui/material";
 import { MdSend } from "react-icons/md";
 import TextareaAutosize from "react-textarea-autosize";
+import { stringAvatar } from "../../helper/UserHelper";
+import { useSelector } from "react-redux";
+import { userMemo } from "../../store/selector";
+import { useFormik } from "formik";
+import { sendCommentRequest } from "../../store/actions/postAction";
 
 const listStyle = {
   listItem: {
@@ -25,14 +31,43 @@ const listStyle = {
   },
 };
 
-const SendComment = () => {
+const ClubPhoto = ({ avatar, name, url }) => {
+  return (
+    <a href={url}>
+      <Fragment>
+        {avatar && <Avatar sx={listStyle.avatar} src={avatar} />}
+        {!avatar && <Avatar {...stringAvatar(`${name}`, 32, 32)} />}
+      </Fragment>
+    </a>
+  );
+};
+
+const SendComment = ({ postID, commentList, setCommentList }) => {
+  const { currentUser } = useSelector(userMemo);
+
+  const { handleSubmit, handleChange, values } = useFormik({
+    initialValues: {
+      comment: "",
+    },
+    onSubmit: async (values, { resetForm }) => {
+      sendCommentRequest(values, postID, currentUser)
+        .then((res) => {
+          setCommentList([...commentList, res]);
+          resetForm();
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    },
+  });
+
   return (
     <div className="sendCommment">
       <ListItem alignItems="flex-start" sx={listStyle.listItem}>
         <ListItemAvatar sx={listStyle.listAvatar}>
-          <Avatar
-            sx={listStyle.avatar}
-            src={"https://openclipart.org/image/800px/215819"}
+          <ClubPhoto
+            avatar={currentUser.providerData[0]?.photoURL}
+            name={currentUser.displayName}
           />
         </ListItemAvatar>
         <ListItemText
@@ -44,10 +79,13 @@ const SendComment = () => {
                   minRows={2}
                   maxRows={5}
                   name="comment"
+                  onChange={handleChange}
+                  values={values.comment}
                   placeholder="Yorum yaz"
+                  value={values.comment}
                 />
-                <button type="button">
-                  <MdSend size={22} />
+                <button type="button" onClick={handleSubmit}>
+                  <MdSend size={20} />
                 </button>
               </div>
             </Typography>
@@ -58,4 +96,4 @@ const SendComment = () => {
   );
 };
 
-export default SendComment;
+export default memo(SendComment);

@@ -1,8 +1,27 @@
 import { Fragment, useEffect } from "react";
 import { IconButton, Avatar, CardHeader } from "@mui/material";
 import { MoreVert } from "@mui/icons-material";
-import { stringAvatar } from "../../helper/UserHelper";
 import { useWindowWidth } from "@react-hook/window-size";
+import { stringAvatar } from "../../helper/UserHelper";
+
+const ClubPhoto = ({ avatar, clubURL, name, windowWidth }) => {
+  return (
+    <a href={clubURL}>
+      {windowWidth > 767 && (
+        <Fragment>
+          {avatar && <Avatar src={avatar} sx={{ width: 38, height: 38 }} />}
+          {!avatar && <Avatar {...stringAvatar(`${name}Club`, 38, 38)} />}
+        </Fragment>
+      )}
+      {windowWidth < 767 && (
+        <Fragment>
+          {avatar && <Avatar src={avatar} />}
+          {!avatar && <Avatar {...stringAvatar(`${name}Club`, 32, 32)} />}
+        </Fragment>
+      )}
+    </a>
+  );
+};
 
 const PostHeader = ({ name, avatar, date, clubURL }) => {
   const windowWidth = useWindowWidth();
@@ -25,92 +44,34 @@ const PostHeader = ({ name, avatar, date, clubURL }) => {
 
   useEffect(() => {}, [windowWidth]);
 
-  var timestamp = 1607110465663
-  
-var datem = new Date(date);
-console.log(datem.getTime())
-// console.log(datem)
-
   return (
     <div className="postHeader">
-      {avatar !== null && (
-        <Fragment>
-          {windowWidth > 767 && (
-            <CardHeader
-              subheader={
-                <span>{`${d.toTimeString()}`}</span>
-              }
-              avatar={
-                <a href={clubURL}>
-                  <Avatar src={avatar} sx={{ width: 50, height: 50 }} />
-                </a>
-              }
-              title={
-                <div className="text-[17px] text-black">
-                  <a href={clubURL}>{name}</a>
-                </div>
-              }
-              action={
-                <IconButton aria-label="settings">
-                  <MoreVert />
-                </IconButton>
-              }
-            />
-          )}
-          {windowWidth < 767 && (
-            <CardHeader
-              subheader={date}
-              avatar={
-                <a href={clubURL}>
-                  <Avatar src={avatar} sx={{ width: 32, height: 32 }} />
-                </a>
-              }
-              title={<div className="text-[17px] text-black">{name}</div>}
-              action={
-                <IconButton aria-label="settings">
-                  <MoreVert />
-                </IconButton>
-              }
-            />
-          )}
-        </Fragment>
-      )}
-      {avatar === null && (
-        <Fragment>
-          {windowWidth > 767 && (
-            <CardHeader
-              subheader={date}
-              avatar={
-                <a href={clubURL}>
-                  <Avatar {...stringAvatar(`${name} Kulübü`, 50, 50)} />
-                </a>
-              }
-              title={<div className="text-[17px] text-black">{name}</div>}
-              action={
-                <IconButton aria-label="settings">
-                  <MoreVert />
-                </IconButton>
-              }
-            />
-          )}
-          {windowWidth < 767 && (
-            <CardHeader
-              subheader={date}
-              avatar={
-                <a href={clubURL}>
-                  <Avatar {...stringAvatar(`${name} Kulübü`, 32, 32)} />
-                </a>
-              }
-              title={<div className="text-[17px] text-black">{name}</div>}
-              action={
-                <IconButton aria-label="settings">
-                  <MoreVert />
-                </IconButton>
-              }
-            />
-          )}
-        </Fragment>
-      )}
+      <CardHeader
+        sx={{ paddingBottom: 0 }}
+        subheader={
+          <span className="text-[13px]">{`${d.getHours()}:${d.getMinutes()} / ${d.getDate()} ${
+            months[d.getMonth()]
+          } ${d.getFullYear()}`}</span>
+        }
+        avatar={
+          <ClubPhoto
+            avatar={avatar}
+            name={name}
+            clubURL={clubURL}
+            windowWidth={windowWidth}
+          />
+        }
+        title={
+          <div className="text-base text-black">
+            <a href={clubURL}>{name}</a>
+          </div>
+        }
+        action={
+          <IconButton aria-label="settings">
+            <MoreVert />
+          </IconButton>
+        }
+      />
     </div>
   );
 };
