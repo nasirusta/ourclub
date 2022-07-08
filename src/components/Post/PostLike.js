@@ -1,6 +1,7 @@
-import { Fragment, useState } from "react";
+import { useEffect, Fragment, useState } from "react";
 import { IconButton, Tooltip } from "@mui/material";
 import { MdFavorite } from "react-icons/md";
+import { postLikeInit } from "../../store/actions/postAction";
 
 const liked = (count) => {
   return (
@@ -20,22 +21,29 @@ const noLiked = (count) => {
   );
 };
 
-const PostLike = () => {
-  const [likedAction, SetLiked] = useState(false);
-  const [likedCount, SetLikedCount] = useState(0);
-
-  const countForLike = async () => {
-    if (likedAction) {
-      SetLikedCount(likedCount - 1);
-    } else {
-      SetLikedCount(likedCount + 1);
-    }
-  };
+const PostLike = ({ currentUser, data }) => {
+  const [likedAction, SetLiked] = useState(true);
+  const [likedCount, SetLikedCount] = useState(false);
 
   const handleClick = async () => {
-    SetLiked(!likedAction);
-    countForLike();
+    postLikeInit(data.postID, currentUser.uid).then((res) => {
+      SetLikedCount(res.likesCount);
+      SetLiked(res.liked);
+    });
   };
+
+  const checkLiked = async () => {
+    let postLiked = !data.likes ? [] : data.likes;
+    const filterLike = postLiked.find((row) => row.user === currentUser.uid);
+    filterLike ?? SetLiked(false);
+  };
+
+  useEffect(() => {
+    let postLikeCount = !data.likes ? [] : data.likes;
+    SetLikedCount(postLikeCount.length);
+
+    checkLiked();
+  }, []);
 
   return (
     <Tooltip title={likedAction ? "Beğenmeyi geri al" : "Beğen"}>

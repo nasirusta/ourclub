@@ -16,9 +16,10 @@ import {
 } from "firebase/firestore";
 const commentsCollectionRef = collection(db, "comments");
 
-const Post = ({ data }) => {
+const Post = ({ data, currentUser }) => {
   const [commentList, setCommentList] = useState([]);
   const [noOfElement, setNoOfElement] = useState(2);
+  const [isLiked, setIsLiked] = useState(false);
 
   const slice = commentList.slice(0, noOfElement);
   const loadMore = () => {
@@ -43,12 +44,9 @@ const Post = ({ data }) => {
       };
     });
     const resolved = await Promise.all(record);
-    console.log(resolved);
     setCommentList(resolved);
   };
-
   useEffect(() => {
-    console.log("Post");
     getCommentList();
   }, []);
 
@@ -62,7 +60,11 @@ const Post = ({ data }) => {
       />
       <PostContent content={data.text} media={data.image_url} />
       <Fragment>
-        <PostActions />
+        <PostActions
+          data={data}
+          currentUser={currentUser}
+          commentCount={commentList.length}
+        />
         <SendComment
           postID={data.postID}
           commentList={commentList}

@@ -9,7 +9,7 @@ import { Alert } from "evergreen-ui";
 const TimeLine = () => {
   const { currentClub } = useSelector(clubPageMemo);
   const posts = useSelector(postMemo);
-  const { subscribed_clubs } = useSelector(userMemo);
+  const { subscribed_clubs, currentUser } = useSelector(userMemo);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -19,7 +19,9 @@ const TimeLine = () => {
   return (
     <div className="timeLine">
       {!posts.loading &&
-        posts.contents.map((data, i) => <Post data={data} key={i} />)}
+        posts.contents.map((data, i) => (
+          <Post currentUser={currentUser} data={data} key={i} />
+        ))}
       {posts.loading && (
         <div className="w-full flex flex-wrap items-center justify-center py-4">
           <ReactLoading type={"spin"} height={32} width={32} color="#1976d2" />

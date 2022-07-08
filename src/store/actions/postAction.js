@@ -53,6 +53,7 @@ const getPostInit = (currentClub, subscribed_clubs) => async (dispatch) => {
             clubID: docN.data().clubID,
             clubURL: docN.data().clubURL,
             user: docN.data().user,
+            likes: docN.data()?.likes ?? [],
           };
         });
 
@@ -274,4 +275,69 @@ const commentDisLikInit = (id, user) => {
   });
 };
 
-export { getPostInit, sendCommentRequest, commentLikeInit, commentDisLikInit };
+const postLikeInit = (id, user) => {
+  return new Promise(async (resolve, reject) => {
+    const postDoc = doc(db, "posts", id);
+    const docSnap = await getDoc(postDoc);
+
+    let postLikes = !docSnap.data().likes ? [] : docSnap.data().likes;
+
+    const d = new Date();
+    const likeUser = {
+      like_time: d.getTime(),
+      user: user,
+    };
+
+    const filterLikes = postLikes.filter((row) => row.user === user);
+
+    if (filterLikes.length === 0) {
+      updateDoc(postDoc, {
+        likes: [...postLikes, likeUser],
+      })
+        .then(() => {
+          getDoc(postDoc)
+            .then((doc) => {
+              resolve({
+                likesCount: doc.data().likes.length,
+                liked: true,
+              });
+            })
+            .catch(() => {
+              reject(false);
+            });
+        })
+        .catch(() => {
+          reject(false);
+        });
+    } else {
+      const disUser = postLikes.filter((row) => row.user !== user);
+      let ctrlLike = !disUser ? [] : disUser;
+      updateDoc(postDoc, {
+        likes: ctrlLike,
+      })
+        .then(() => {
+          getDoc(postDoc)
+            .then((doc) => {
+              resolve({
+                likesCount: doc.data().likes.length,
+                liked: false,
+              });
+            })
+            .catch(() => {
+              reject(false);
+            });
+        })
+        .catch(() => {
+          reject(false);
+        });
+    }
+  });
+};
+
+export {
+  getPostInit,
+  sendCommentRequest,
+  commentLikeInit,
+  commentDisLikInit,
+  postLikeInit,
+};

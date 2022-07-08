@@ -1,10 +1,11 @@
 import { FooterSection, HeaderSection } from "./components";
+import { Toaster } from "react-hot-toast";
 
 const GetPage = ({ Page, header = true }) => {
   return (
     <div id="app">
-      {header &&
-      <HeaderSection />}
+      <Toaster />
+      {header && <HeaderSection />}
       <div id="wrap">
         <div className="lg:container mx-auto">
           <Page />
